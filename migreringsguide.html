@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Migreringsguide for regnskapssystemer</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --card-bg: #ffffff;
+    --border: #e3e1d9;
+    --border-strong: #c9c6ba;
+    --text: #1f1e1b;
+    --text-secondary: #6b6a63;
+    --text-tertiary: #9a988f;
+    --accent: #185fa5;
+    --accent-bg: #e6f1fb;
+    --accent-text: #0c447c;
+    --success: #3b6d11;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+  }
+  .subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0 0 2rem;
+  }
+  .select-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 8px;
+    font-weight: 500;
+  }
+  .system-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 8px;
+    margin-bottom: 1.75rem;
+  }
+  .system-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 13px;
+    font-family: inherit;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    color: var(--text);
+    transition: border-color .15s, background .15s;
+  }
+  .system-btn:hover:not(:disabled) {
+    border-color: var(--border-strong);
+  }
+  .system-btn.active {
+    border: 2px solid var(--accent);
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    font-weight: 600;
+    padding: 11px 13px;
+  }
+  .system-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .icon {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .cta-btn {
+    width: 100%;
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 2px solid var(--accent);
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+  .cta-btn:hover { background: #d8eafa; }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    padding: 7px 12px;
+    margin-bottom: 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    color: var(--text);
+  }
+  .back-btn:hover { border-color: var(--border-strong); }
+  .header-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .header-row .sep {
+    color: var(--text-tertiary);
+    font-weight: 400;
+  }
+  .intro-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0.25rem 0 1.5rem;
+  }
+  .progress-wrap { margin: 1rem 0 1.75rem; }
+  .progress-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+  .progress-bar-outer {
+    height: 6px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+    transition: width .2s;
+    width: 0%;
+  }
+  .phase-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .phase-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  .phase-title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .phase-count {
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .step-row {
+    padding: 9px 0;
+    border-top: 1px solid var(--border);
+  }
+  .step-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .step-label input[type="checkbox"] {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .step-title {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .step-title.done {
+    color: var(--text-tertiary);
+    text-decoration: line-through;
+    font-weight: 400;
+  }
+  .step-detail {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+  .reset-btn {
+    font-size: 12px;
+    font-family: inherit;
+    padding: 7px 12px;
+    color: var(--text-secondary);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .reset-btn:hover { border-color: var(--border-strong); }
+  .section-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 8px;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Migreringsguide for regnskapssystemer</h1>
+  <p class="subtitle">Velg systemet kunden flyttes fra og til, så får du en detaljert, avhukbar fremgangsmåte.</p>
+  <div id="app"></div>
+</div>
+
+<script>
+const SYSTEMS = ["Duett", "SB1 Regnskap / Unimicro", "Finago", "Tripletex"];
+
+const ICONS = {
+  "Duett": "&#127974;",
+  "SB1 Regnskap / Unimicro": "&#128179;",
+  "Finago": "&#128193;",
+  "Tripletex": "&#128202;"
+};
+
+function checklist(steps) {
+  return steps.map((s, i) => ({ id: "s" + i, title: s.t, detail: s.d || "" }));
+}
+
+function scenarioKey(from, to) {
+  return from + "__" + to;
+}
+
+const SCENARIOS = {};
+
+SCENARIOS[scenarioKey("Duett", "SB1 Regnskap / Unimicro")] = {
+  title: "Duett \u2192 SB1 Regnskap / Unimicro",
+  intro: "Standard migreringsl\u00f8p ved bytte fra Duett til SB1 Regnskap. St\u00f8rste risikopunkt er kundenummer-mismatch mellom kildesystem for fakturering (f.eks. ProdSys) og SB1 ved SAF-T-import.",
+  phases: [
+    {
+      name: "Forberedelse og kartlegging",
+      steps: checklist([
+        { t: "Eksporter full kontoplan fra Duett", d: "Ta ut kontoplan med kontonummer, kontonavn, MVA-koder og evt. dimensjoner (avdeling/prosjekt). Sammenlign mot SB1 sin standard kontoplan (NS 4102) for \u00e5 identifisere avvik." },
+        { t: "Eksporter kunderegister og leverand\u00f8rregister", d: "Ta ut fullstendig kunde- og leverand\u00f8rliste med organisasjonsnummer, adresse, MVA-status, betalingsbetingelser og eksisterende kundenummer/leverand\u00f8rnummer." },
+        { t: "Identifiser kundenummer-kilde", d: "Avklar om kunden fakturerer direkte fra Duett eller fra et eksternt system (f.eks. ProdSys) som integreres mot regnskapssystemet. Dette avgj\u00f8r om kundenummer m\u00e5 mappes 1:1 eller kan renummereres." },
+        { t: "Sjekk \u00e5pne poster (saldoliste)", d: "Hent ut \u00e5pne kunde- og leverand\u00f8rfordringer (saldobalanse pr. dato) som m\u00e5 overf\u00f8res manuelt eller via \u00e5pningsbalanse." },
+        { t: "Bestem migreringsdato (cut-over)", d: "Velg en periodeslutt (typisk m\u00e5nedsskifte) som skj\u00e6ringspunkt. Alt f\u00f8r denne datoen blir i Duett (historikk), alt etter g\u00e5r i SB1." }
+      ])
+    },
+    {
+      name: "SAF-T eksport og import",
+      steps: checklist([
+        { t: "Generer SAF-T-fil fra Duett", d: "Bruk Duett sin innebygde SAF-T-eksport (Regnskap \u2192 Rapporter \u2192 SAF-T). Velg riktig periode \u2013 typisk hele innev\u00e6rende regnskaps\u00e5r for \u00e5 f\u00e5 med historiske transaksjoner." },
+        { t: "Valider SAF-T-filen", d: "Kj\u00f8r filen gjennom Skatteetatens offisielle SAF-T-validator (XML-skjemavalidering) f\u00f8r import, for \u00e5 fange strukturfeil tidlig." },
+        { t: "Sjekk SAF-T-innstillinger for kundenummer", d: "KRITISK: SAF-T-standarden bruker kundens organisasjonsnummer eller SAF-T-intern ID som n\u00f8kkel, ikke n\u00f8dvendigvis det kundenummeret kunden er vant til \u00e5 se p\u00e5 fakturaer. Sjekk eksportinnstillingene i Duett for hvilket felt som brukes." },
+        { t: "Importer SAF-T i SB1 Regnskap / Unimicro", d: "Last opp filen via Unimicro sitt importgrensesnitt. Systemet oppretter automatisk kontoplan, kunder, leverand\u00f8rer og \u00e5pningsbalanse basert p\u00e5 filinnholdet." },
+        { t: "Kontroller genererte kundenumre mot kildesystem", d: "Sammenlign kundenumrene SB1 har generert mot de opprinnelige numrene i Duett/ProdSys. Mismatch oppst\u00e5r typisk fordi SAF-T-importen tildeler nye l\u00f8penumre i stedet for \u00e5 beholde eksisterende." }
+      ])
+    },
+    {
+      name: "H\u00e5ndtering av kundenummer-mismatch",
+      steps: checklist([
+        { t: "Lag sammenligningsliste (kildesystem vs. SB1)", d: "Bygg et regneark med kolonner: kundenavn, org.nr, kundenummer i kildesystem (f.eks. ProdSys), kundenummer i SB1 etter import. Marker avvik." },
+        { t: "Avklar om renummerering kreves", d: "Hvis kunden fakturerer fra et eksternt system som forventer et bestemt kundenummerformat, m\u00e5 SB1-kundene renummereres til \u00e5 matche kildesystemet \u2013 ellers feiler integrasjonen eller fakturareferanser blir feil." },
+        { t: "Forbered importmal for renummerering", d: "Lag en strukturert importfil (CSV/XLSX) med gammelt SB1-kundenummer \u2192 \u00f8nsket kundenummer, samt evt. kundenavn og org.nr for verifisering." },
+        { t: "Send mal til Unimicro support/utvikler", d: "Massendring av kundenummer kan ikke alltid gj\u00f8res i brukergrensesnittet (pga. unike n\u00f8kkelbegrensninger i databasen). Send importmalen til Unimicro for manuell kj\u00f8ring via deres verkt\u00f8y." },
+        { t: "Verifiser at historiske transaksjoner f\u00f8lger med", d: "Etter renummerering: kontroller at fakturahistorikk, \u00e5pne poster og betalingshistorikk fortsatt er koblet riktig til det nye kundenummeret." }
+      ])
+    },
+    {
+      name: "\u00c5pningsbalanse og avstemming",
+      steps: checklist([
+        { t: "Kontroller \u00e5pningsbalanse mot Duett", d: "Sammenlign saldobalansen som er importert i SB1 mot uttrekk fra Duett p\u00e5 samme dato, konto for konto." },
+        { t: "Avstem bank", d: "Sjekk at bankkontoens saldo i SB1 stemmer med faktisk kontoutskrift p\u00e5 cut-over-dato." },
+        { t: "Avstem MVA-koder", d: "Kontroller at MVA-koder fra Duett er korrekt mappet til SB1 sine MVA-koder, spesielt for eventuelle spesialsatser eller unntak." },
+        { t: "Test \u00e5pne kundefordringer og leverand\u00f8rgjeld", d: "Verifiser at \u00e5pne poster (ubetalte fakturaer) er korrekt overf\u00f8rt og kan matches mot innbetalinger som kommer inn etter migrering." }
+      ])
+    },
+    {
+      name: "Integrasjon og go-live",
+      steps: checklist([
+        { t: "Sett opp ny integrasjon mot fakturasystem", d: "Hvis kunden bruker eksternt faktureringssystem (f.eks. ProdSys), konfigurer integrasjonen p\u00e5 nytt mot SB1 sitt API, med de korrigerte kundenumrene." },
+        { t: "Kj\u00f8r testfaktura end-to-end", d: "Send en testfaktura fra kildesystemet gjennom integrasjonen og bekreft at den havner riktig i SB1 med riktig kundenummer, kontering og MVA." },
+        { t: "Lukk gammelt system for nye bilag", d: "L\u00e5s Duett for nye transaksjoner etter cut-over-dato, men behold tilgang for historikk/revisjon." },
+        { t: "Informer kunden om endringen", d: "Send bekreftelse til kunden om at migreringen er fullf\u00f8rt, ev. med ny p\u00e5loggingsinformasjon til SB1." }
+      ])
+    }
+  ]
+};
+
+SCENARIOS[scenarioKey("SB1 Regnskap / Unimicro", "Duett")] = {
+  title: "SB1 Regnskap / Unimicro \u2192 Duett",
+  intro: "Mindre vanlig retning, men samme prinsipper gjelder \u2013 med Duett som mottakersystem for SAF-T.",
+  phases: [
+    {
+      name: "Forberedelse og kartlegging",
+      steps: checklist([
+        { t: "Eksporter kontoplan og MVA-koder fra SB1", d: "Ta ut full kontoplan inkl. dimensjoner (avdeling/prosjekt) og MVA-koder for sammenligning mot Duett sin oppsett." },
+        { t: "Eksporter kunde- og leverand\u00f8rregister", d: "Inkluder org.nr, adresse, betalingsbetingelser, og eksisterende kundenummer." },
+        { t: "Hent saldoliste / \u00e5pne poster", d: "Ta ut \u00e5pne kunde- og leverand\u00f8rfordringer pr. migreringsdato." },
+        { t: "Bestem cut-over-dato", d: "Velg periodeslutt som skj\u00e6ringspunkt mellom systemene." }
+      ])
+    },
+    {
+      name: "SAF-T eksport og import",
+      steps: checklist([
+        { t: "Generer SAF-T-fil fra SB1 Regnskap", d: "Bruk Unimicro sin SAF-T-eksportfunksjon for hele relevant regnskaps\u00e5r." },
+        { t: "Valider filen mot Skatteetatens SAF-T-skjema", d: "Kj\u00f8r gjennom offisiell validator f\u00f8r import for \u00e5 unng\u00e5 strukturfeil." },
+        { t: "Importer i Duett", d: "Last opp SAF-T-filen i Duett sitt importmodul for regnskapsdata." },
+        { t: "Kontroller at kontoplan og \u00e5pningsbalanse er korrekt overf\u00f8rt", d: "Sammenlign konto for konto mot kildedata fra SB1." }
+      ])
+    },
+    {
+      name: "Kundenummer og referanser",
+      steps: checklist([
+        { t: "Sammenlign kundenummer f\u00f8r/etter import", d: "Bygg sammenligningsliste mellom SB1-kundenummer og det Duett genererer ved import." },
+        { t: "Avklar om eksternt faktureringssystem krever fast kundenummer", d: "Hvis kunden fakturerer via et annet system, m\u00e5 Duett-kundenumrene matche dette systemets forventninger." },
+        { t: "Kontakt Duett support ved behov for masseendring", d: "Strukturerte endringer av kundenummer kan kreve direkte involvering fra leverand\u00f8r." }
+      ])
+    },
+    {
+      name: "Avstemming og go-live",
+      steps: checklist([
+        { t: "Avstem \u00e5pningsbalanse, bank og MVA", d: "Kontroller alle hovedtall mot kildesystemet f\u00f8r systemet tas i bruk for nye bilag." },
+        { t: "Test fakturaflyt end-to-end", d: "Kj\u00f8r en komplett testtransaksjon gjennom hele kjeden." },
+        { t: "L\u00e5s SB1 for nye bilag, behold for historikk", d: "Sikre tilgang til gamle data for revisjon." },
+        { t: "Informer kunden", d: "Bekreft fullf\u00f8rt migrering og gi ev. ny p\u00e5loggingsinformasjon." }
+      ])
+    }
+  ]
+};
+
+function genericScenario(from, to) {
+  return {
+    title: from + " \u2192 " + to,
+    intro: "Generelt migreringsl\u00f8p mellom regnskapssystemer i Norge. Konkrete skjermbilder/menyvalg vil avvike noe \u2013 prinsippene under (SAF-T, kundenummer-mapping, avstemming) gjelder uansett systempar.",
+    phases: [
+      {
+        name: "Forberedelse og kartlegging",
+        steps: checklist([
+          { t: "Eksporter kontoplan fra " + from, d: "Ta ut full kontoplan med kontonummer, kontonavn, MVA-koder og evt. dimensjoner (avdeling/prosjekt/kostnadssted). Sammenlign mot " + to + " sin standard kontoplan (NS 4102) for \u00e5 identifisere avvik som krever mapping." },
+          { t: "Eksporter kunde- og leverand\u00f8rregister", d: "Hent ut fullstendig liste med org.nr, navn, adresse, MVA-status, betalingsbetingelser og eksisterende kundenummer/leverand\u00f8rnummer fra " + from + "." },
+          { t: "Kartlegg eksterne integrasjoner", d: "Identifiser om kunden har eksterne systemer (faktureringssystem, lager, nettbutikk, l\u00f8nnssystem) som er koblet mot " + from + ", og som m\u00e5 kobles om til " + to + " etter migrering." },
+          { t: "Hent saldoliste / \u00e5pne poster", d: "Ta ut \u00e5pne kunde- og leverand\u00f8rfordringer (saldobalanse) pr. planlagt migreringsdato." },
+          { t: "Bestem cut-over-dato", d: "Velg en periodeslutt (typisk m\u00e5nedsskifte eller \u00e5rsskifte) som klart skj\u00e6ringspunkt mellom de to systemene." }
+        ])
+      },
+      {
+        name: "SAF-T eksport og import",
+        steps: checklist([
+          { t: "Generer SAF-T-fil fra " + from, d: "Bruk innebygd SAF-T-eksportfunksjon (de fleste norske regnskapssystemer st\u00f8tter dette som krav fra Skatteetaten). Velg relevant periode \u2013 typisk hele innev\u00e6rende regnskaps\u00e5r for \u00e5 f\u00e5 med historikk." },
+          { t: "Valider SAF-T-filen", d: "Kj\u00f8r filen gjennom Skatteetatens offisielle SAF-T-validator (XSD-skjemavalidering) for \u00e5 fange strukturfeil f\u00f8r import." },
+          { t: "Sjekk hvilket felt som brukes som kunden\u00f8kkel i eksporten", d: "KRITISK: SAF-T kan bruke enten internt kundenummer, org.nummer eller en generert SAF-T-ID som n\u00f8kkel. Dette avgj\u00f8r om kundenumrene blir bevart eller endret ved import til " + to + "." },
+          { t: "Importer SAF-T i " + to, d: "Last opp filen i mottakersystemets importmodul. Systemet oppretter normalt kontoplan, kunder, leverand\u00f8rer og \u00e5pningsbalanse automatisk basert p\u00e5 filinnholdet." },
+          { t: "Kontroller genererte kundenumre mot kildesystem", d: "Sammenlign kundenumrene " + to + " har generert mot de opprinnelige numrene i " + from + " / eventuelt eksternt faktureringssystem. Mismatch er den vanligste feilkilden ved denne typen migrering." }
+        ])
+      },
+      {
+        name: "H\u00e5ndtering av kundenummer-mismatch",
+        steps: checklist([
+          { t: "Lag sammenligningsliste (kildesystem vs. m\u00e5lsystem)", d: "Bygg et regneark: kundenavn, org.nr, kundenummer f\u00f8r, kundenummer etter import. Marker alle avvik tydelig." },
+          { t: "Avklar om renummerering kreves", d: "Hvis kunden fakturerer fra et eksternt system som forventer bestemte kundenumre, m\u00e5 kundene i " + to + " renummereres til \u00e5 matche \u2013 ellers feiler integrasjon eller fakturareferanser." },
+          { t: "Forbered strukturert importmal for renummerering", d: "Lag en importfil (CSV/XLSX) med gammelt kundenummer \u2192 \u00f8nsket kundenummer, pluss kundenavn/org.nr for verifisering." },
+          { t: "Send mal til leverand\u00f8rens support/utviklere ved behov", d: "Massendring av kundenummer kan v\u00e6re begrenset av unike n\u00f8kler i databasen og krever ofte manuell kj\u00f8ring fra leverand\u00f8rsiden." },
+          { t: "Verifiser at historikk f\u00f8lger med etter renummerering", d: "Kontroller at fakturahistorikk, \u00e5pne poster og betalingshistorikk fortsatt er koblet riktig til nytt kundenummer." }
+        ])
+      },
+      {
+        name: "\u00c5pningsbalanse og avstemming",
+        steps: checklist([
+          { t: "Kontroller \u00e5pningsbalanse mot " + from, d: "Sammenlign saldobalansen i " + to + " mot uttrekk fra " + from + " p\u00e5 samme dato, konto for konto." },
+          { t: "Avstem bank", d: "Kontroller at bankkontoens saldo i nytt system stemmer med faktisk kontoutskrift p\u00e5 cut-over-dato." },
+          { t: "Avstem MVA-koder", d: "Sjekk at MVA-koder er korrekt mappet, spesielt spesialsatser, unntak og evt. omvendt avgiftsplikt." },
+          { t: "Test \u00e5pne kundefordringer og leverand\u00f8rgjeld", d: "Verifiser at \u00e5pne poster er korrekt overf\u00f8rt og kan matches mot innbetalinger/utbetalinger som kommer etter migrering." }
+        ])
+      },
+      {
+        name: "Integrasjon og go-live",
+        steps: checklist([
+          { t: "Sett opp integrasjoner p\u00e5 nytt mot " + to, d: "Konfigurer ev. eksterne systemer (fakturering, lager, l\u00f8nn) mot nytt regnskapssystems API, med korrigerte kundenumre/kontoplan." },
+          { t: "Kj\u00f8r testtransaksjon end-to-end", d: "Send en testfaktura/bilag gjennom hele kjeden og bekreft riktig kontering, kundenummer og MVA i " + to + "." },
+          { t: "L\u00e5s " + from + " for nye bilag", d: "Steng kildesystemet for nye transaksjoner etter cut-over, men behold lesetilgang for historikk og revisjon." },
+          { t: "Informer kunden om fullf\u00f8rt migrering", d: "Send bekreftelse, ev. med ny p\u00e5loggingsinformasjon og kort oppsummering av hva som er flyttet." }
+        ])
+      }
+    ]
+  };
+}
+
+function getScenario(from, to) {
+  const key = scenarioKey(from, to);
+  if (SCENARIOS[key]) return SCENARIOS[key];
+  return genericScenario(from, to);
+}
+
+const state = {
+  from: null,
+  to: null,
+  checked: {}
+};
+
+function loadProgress(key) {
+  try {
+    const raw = localStorage.getItem('migreringsguide:' + key);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveProgress(key, checked) {
+  try {
+    localStorage.setItem('migreringsguide:' + key, JSON.stringify(checked));
+  } catch (e) {}
+}
+
+function renderPicker() {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  const fromLabel = document.createElement('div');
+  fromLabel.className = 'select-label';
+  fromLabel.textContent = 'Velg systemet kunden flyttes fra:';
+  app.appendChild(fromLabel);
+
+  const fromGrid = document.createElement('div');
+  fromGrid.className = 'system-grid';
+  SYSTEMS.forEach(sys => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'system-btn' + (state.from === sys ? ' active' : '');
+    btn.innerHTML = '<span class="icon">' + ICONS[sys] + '</span><span>' + sys + '</span>';
+    btn.onclick = () => { state.from = sys; renderPicker(); };
+    fromGrid.appendChild(btn);
+  });
+  app.appendChild(fromGrid);
+
+  const toLabel = document.createElement('div');
+  toLabel.className = 'select-label';
+  toLabel.textContent = 'Velg systemet kunden flyttes til:';
+  app.appendChild(toLabel);
+
+  const toGrid = document.createElement('div');
+  toGrid.className = 'system-grid';
+  SYSTEMS.forEach(sys => {
+    const disabled = sys === state.from;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.disabled = disabled;
+    btn.className = 'system-btn' + (state.to === sys && !disabled ? ' active' : '');
+    btn.innerHTML = '<span class="icon">' + ICONS[sys] + '</span><span>' + sys + '</span>';
+    if (!disabled) btn.onclick = () => { state.to = sys; renderPicker(); };
+    toGrid.appendChild(btn);
+  });
+  app.appendChild(toGrid);
+
+  if (state.from && state.to) {
+    const cta = document.createElement('button');
+    cta.type = 'button';
+    cta.className = 'cta-btn';
+    cta.textContent = 'Vis migreringsguide \u2192';
+    cta.onclick = () => {
+      const key = scenarioKey(state.from, state.to);
+      state.checked = loadProgress(key);
+      renderGuide();
+    };
+    app.appendChild(cta);
+  }
+}
+
+function countDone(steps, checked) {
+  return steps.filter(s => checked[s.id]).length;
+}
+
+function renderGuide() {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  const scenario = getScenario(state.from, state.to);
+  const key = scenarioKey(state.from, state.to);
+
+  const backBtn = document.createElement('button');
+  backBtn.type = 'button';
+  backBtn.className = 'back-btn';
+  backBtn.textContent = '\u2190 Bytt scenario';
+  backBtn.onclick = () => { renderPicker(); };
+  app.appendChild(backBtn);
+
+  const headerRow = document.createElement('div');
+  headerRow.className = 'header-row';
+  headerRow.innerHTML = '<span class="icon">' + ICONS[state.from] + '</span><span>' + state.from + '</span>' +
+    '<span class="sep">\u2192</span>' +
+    '<span class="icon">' + ICONS[state.to] + '</span><span>' + state.to + '</span>';
+  app.appendChild(headerRow);
+
+  const introEl = document.createElement('p');
+  introEl.className = 'intro-text';
+  introEl.textContent = scenario.intro;
+  app.appendChild(introEl);
+
+  let totalSteps = 0;
+  scenario.phases.forEach(p => totalSteps += p.steps.length);
+
+  const progressWrap = document.createElement('div');
+  progressWrap.className = 'progress-wrap';
+  const progressLabel = document.createElement('div');
+  progressLabel.className = 'progress-label';
+  progressLabel.id = 'progress-label';
+  progressWrap.appendChild(progressLabel);
+  const barOuter = document.createElement('div');
+  barOuter.className = 'progress-bar-outer';
+  const barInner = document.createElement('div');
+  barInner.className = 'progress-bar-inner';
+  barInner.id = 'progress-bar';
+  barOuter.appendChild(barInner);
+  progressWrap.appendChild(barOuter);
+  app.appendChild(progressWrap);
+
+  function updateProgress() {
+    let done = 0;
+    scenario.phases.forEach(p => { done += countDone(p.steps, state.checked); });
+    const pct = totalSteps ? Math.round((done / totalSteps) * 100) : 0;
+    document.getElementById('progress-label').textContent = done + ' av ' + totalSteps + ' steg fullf\u00f8rt (' + pct + '%)';
+    document.getElementById('progress-bar').style.width = pct + '%';
+  }
+
+  scenario.phases.forEach((phase, pi) => {
+    const phaseCard = document.createElement('div');
+    phaseCard.className = 'phase-card';
+
+    const phaseHeader = document.createElement('div');
+    phaseHeader.className = 'phase-header';
+    const phaseTitle = document.createElement('div');
+    phaseTitle.className = 'phase-title';
+    phaseTitle.textContent = (pi + 1) + '. ' + phase.name;
+    phaseHeader.appendChild(phaseTitle);
+    const phaseCount = document.createElement('div');
+    phaseCount.className = 'phase-count';
+    phaseCount.id = 'phase-count-' + pi;
+    phaseHeader.appendChild(phaseCount);
+    phaseCard.appendChild(phaseHeader);
+
+    function updatePhaseCount() {
+      const done = countDone(phase.steps, state.checked);
+      document.getElementById('phase-count-' + pi).textContent = done + '/' + phase.steps.length;
+    }
+
+    phase.steps.forEach(step => {
+      const stepWrap = document.createElement('div');
+      stepWrap.className = 'step-row';
+
+      const stepRow = document.createElement('label');
+      stepRow.className = 'step-label';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = !!state.checked[step.id];
+
+      const textBlock = document.createElement('div');
+      const titleEl = document.createElement('div');
+      titleEl.className = 'step-title' + (checkbox.checked ? ' done' : '');
+      titleEl.textContent = step.title;
+      textBlock.appendChild(titleEl);
+
+      if (step.detail) {
+        const detailEl = document.createElement('div');
+        detailEl.className = 'step-detail';
+        detailEl.textContent = step.detail;
+        textBlock.appendChild(detailEl);
+      }
+
+      checkbox.onchange = () => {
+        state.checked[step.id] = checkbox.checked;
+        titleEl.className = 'step-title' + (checkbox.checked ? ' done' : '');
+        updatePhaseCount();
+        updateProgress();
+        saveProgress(key, state.checked);
+      };
+
+      stepRow.appendChild(checkbox);
+      stepRow.appendChild(textBlock);
+      stepWrap.appendChild(stepRow);
+      phaseCard.appendChild(stepWrap);
+    });
+
+    app.appendChild(phaseCard);
+    updatePhaseCount();
+  });
+
+  const resetBtn = document.createElement('button');
+  resetBtn.type = 'button';
+  resetBtn.className = 'reset-btn';
+  resetBtn.textContent = '\u21bb Nullstill fremdrift for dette scenarioet';
+  resetBtn.onclick = () => {
+    state.checked = {};
+    saveProgress(key, {});
+    renderGuide();
+  };
+  app.appendChild(resetBtn);
+
+  updateProgress();
+}
+
+renderPicker();
+</script>
+</body>
+</html>
